@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../src/Style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Workforce<span>OS</span></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html" class="active">Staff</a></li>
+            <li><a href="fired.html">Archive 📁</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Staff</span>
+                <h2 id="totalStaffCount">0</h2>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Monthly Payroll</span>
+                <h2 id="totalPayroll">$0</h2>
+            </div>
+        </div>
+
+        <div class="table-controls">
+            <h3>Active Directory</h3>
+            <div class="search-box">
+                <input type="text" id="staffSearch" placeholder="Search name..." onkeyup="filterStaff()">
+            </div>
+        </div>
+
+        <section class="card table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Employee</th><th>Role</th><th class="desktop-only">Salary</th><th>Action</th></tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="manageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Manage</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <select id="actionSelect" onchange="toggleActionFields()" class="full-width">
+                    <option value="">-- Choose Action --</option>
+                    <option value="pay">💰 Pay</option>
+                    <option value="raise">📈 Raise</option>
+                    <option value="promote">🎓 Promote</option>
+                    <option value="feedback">💬 Feedback</option>
+                    <option value="fire">✕ Fire</option>
+                </select>
+                <div id="inputArea"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary full-width" onclick="closeModal()">Cancel</button>
+                <button id="confirmBtn" class="btn-primary full-width">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <script src="../src/script.js"></script>
+</body>
+</html>

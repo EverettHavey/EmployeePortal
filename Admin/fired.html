@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminated Employees</title>
+    <link rel="stylesheet" href="../src/Style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">AdminPanel | Archive</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html">Active Staff</a></li>
+            <li><a href="fired.html" class="active">Fired List 📁</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section class="card">
+            <h2>Terminated Employees</h2>
+            <p>View history or rehire employees below.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="firedTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script src="../src/script.js"></script>
+</body>
+</html>

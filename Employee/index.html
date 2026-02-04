@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Portal</title>
+    <link rel="stylesheet" href="../src/Style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">StaffPortal</div>
+        <ul class="nav-links"><li><a href="../index.html">Exit</a></li></ul>
+    </nav>
+    <main class="container">
+        <div id="loginSection" class="card">
+            <h2 class="text-center">Sign In</h2>
+            <div id="loginList" class="login-radio-group"></div>
+            <button onclick="loginEmployee()" class="btn-primary full-width" style="margin-top:20px;">Access Records</button>
+        </div>
+        <div id="profileSection" class="card" style="display:none;"></div>
+    </main>
+    <script src="../src/script.js"></script>
+</body>
+</html>
