@@ -4,6 +4,8 @@
     "name": "Sarah Chen",
     "role": "Lead Developer",
     "salary": 95000,
+    "age": 29,
+    "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=sarah",
     "bio": "Specializes in React and Node.js. Loves coffee and hiking on weekends.",
     "history": []
@@ -13,6 +15,8 @@
     "name": "Marcus Rodriguez",
     "role": "UI/UX Designer",
     "salary": 72000,
+    "age": 31,
+    "gender": "Male",
     "image": "https://i.pravatar.cc/150?u=marcus",
     "bio": "Focused on accessible design. Has a passion for minimalist architecture.",
     "history": []
@@ -22,6 +26,8 @@
     "name": "Aisha Khan",
     "role": "Marketing Manager",
     "salary": 81000,
+    "age": 34,
+    "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=aisha",
     "bio": "Expert in digital growth strategies. Former journalist and marathon runner.",
     "history": []
@@ -31,6 +37,8 @@
     "name": "James Wilson",
     "role": "Backend Engineer",
     "salary": 88000,
+    "age": 27,
+    "gender": "Male",
     "image": "https://i.pravatar.cc/150?u=james",
     "bio": "Database wizard and cybersecurity enthusiast. Built his own smart home from scratch.",
     "history": []
@@ -40,7 +48,10 @@
     "name": "Elena Rossi",
     "role": "Product Owner",
     "salary": 105000,
+    "age": 30,
+    "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=elena",
     "bio": "Bridges the gap between users and tech. Loves classical music and Italian cooking.",
-    "history": []}
+    "history": []
+  }
 ]

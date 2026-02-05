@@ -3,10 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>WorkforceOS | Admin Dashboard</title>
     <link rel="stylesheet" href="../src/Style.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-glass: rgba(255, 255, 255, 0.9);
+        }
+
+        body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; }
+
+        /* Toast Notifications */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .toast {
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 12px;
+            margin-bottom: 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease-out; font-size: 0.9rem;
+        }
+
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* Table & Layout */
+        .table-card { border: 1px solid #e2e8f0; background: white; border-radius: 16px; margin-top: 20px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: #64748b; font-size: 0.75rem; text-transform: uppercase; padding: 16px; border-bottom: 1px solid #e2e8f0; background: #fcfdfe; }
+        td { padding: 16px; border-bottom: 1px solid #f1f5f9; }
+        tr:hover { background-color: #f8fafc; }
+
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-inactive { background: #fef3c7; color: #92400e; }
+
+        /* Modal Design */
+        .modal { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; z-index: 2000; 
+        }
+        .modal-content { 
+            background: white; padding: 32px; border-radius: 24px; width: 100%; max-width: 440px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative;
+        }
+
+        .input-group { margin-top: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;
+            font-family: inherit; transition: 0.2s; box-sizing: border-box;
+        }
+        
+        .btn-manage { padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; transition: 0.2s; }
+        .btn-manage:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        
+        /* Profile Card Styles */
+        .profile-img-circle {
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; border: 4px solid var(--primary);
+            margin: 0 auto 15px; display: block;
+            box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2);
+        }
+        .info-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
+            margin: 20px 0; padding: 15px; background: #f1f5f9; border-radius: 16px;
+        }
+        .info-box { text-align: left; }
+        .info-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 800; }
+        .info-value { font-size: 0.9rem; color: #1e293b; font-weight: 600; }
+        .profile-bio { text-align: left; font-size: 0.85rem; line-height: 1.6; color: #475569; padding: 10px; border-left: 3px solid var(--primary); background: #f8fafc; margin: 15px 0; }
+        .clickable-name { cursor: pointer; color: var(--primary); font-weight: 600; }
+        .clickable-name:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
+    <div id="toast-container"></div>
+
     <nav class="navbar">
         <div class="nav-brand">Workforce<span>OS</span></div>
         <ul class="nav-links">
@@ -22,24 +98,32 @@
                 <span class="stat-label">Total Staff</span>
                 <h2 id="totalStaffCount">0</h2>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="border-left: 4px solid var(--warning);">
+                <span class="stat-label">Away/Inactive</span>
+                <h2 id="outCount">0</h2>
+            </div>
+            <div class="stat-card" style="border-left: 4px solid var(--success);">
                 <span class="stat-label">Monthly Payroll</span>
                 <h2 id="totalPayroll">$0</h2>
             </div>
         </div>
 
-        <div class="table-controls">
-            <h3>Active Directory</h3>
-            <div class="search-box">
-                <input type="text" id="staffSearch" placeholder="Search name..." onkeyup="filterStaff()">
-            </div>
+        <div class="table-controls" style="display:flex; justify-content: space-between; align-items: center; margin: 30px 0;">
+            <h3 style="font-weight: 700;">Active Directory</h3>
+            <input type="text" id="staffSearch" placeholder="Search staff..." onkeyup="filterStaff()" style="width: 250px; margin: 0;">
         </div>
 
-        <section class="card table-card">
+        <section class="table-card">
             <div class="table-wrapper">
                 <table>
                     <thead>
-                        <tr><th>Employee</th><th>Role</th><th class="desktop-only">Salary</th><th>Action</th></tr>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="desktop-only">Salary</th>
+                            <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody id="adminTableBody"></tbody>
                 </table>
@@ -49,27 +133,210 @@
 
     <div id="manageModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Manage</h3>
-                <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 id="modalTitle">Manage Employee</h3>
+                <span class="close-modal" onclick="closeModal()" style="cursor:pointer; font-size: 1.5rem;">&times;</span>
             </div>
             <div class="modal-body">
-                <select id="actionSelect" onchange="toggleActionFields()" class="full-width">
-                    <option value="">-- Choose Action --</option>
-                    <option value="pay">💰 Pay</option>
-                    <option value="raise">📈 Raise</option>
-                    <option value="promote">🎓 Promote</option>
-                    <option value="feedback">💬 Feedback</option>
-                    <option value="fire">✕ Fire</option>
-                </select>
+                <div class="input-group">
+                    <label>System Action</label>
+                    <select id="actionSelect" onchange="toggleActionFields()">
+                        <option value="">-- Choose --</option>
+                        <option value="pay">💰 Pay Bonus</option>
+                        <option value="raise">📈 Salary Raise</option>
+                        <option value="promote">🎓 Role Promotion</option>
+                        <option value="dayoff">🌿 Give Rest of Day Off</option>
+                        <option value="paidvacation">🏖️ Paid Vacation</option>
+                        <option value="fire">✕ Terminate</option>
+                    </select>
+                </div>
                 <div id="inputArea"></div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-secondary full-width" onclick="closeModal()">Cancel</button>
-                <button id="confirmBtn" class="btn-primary full-width">Confirm</button>
+            <div class="modal-footer" style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
+                <button id="confirmBtn" class="btn-primary" style="width: 100%; padding: 14px;">Apply Changes</button>
             </div>
         </div>
     </div>
-    <script src="../src/script.js"></script>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" onclick="closeProfile()" style="position:absolute; top:15px; right:20px; cursor:pointer; font-size:1.5rem;">&times;</span>
+            <div id="profileDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditIndex = null;
+        
+        const initialData = [
+            { id: 101, name: "Sarah Chen", role: "Lead Developer", salary: 95000, age: 29, gender: "Female", image: "https://i.pravatar.cc/150?u=sarah", bio: "Specializes in React and Node.js. Loves coffee and hiking on weekends.", history: [] },
+            { id: 102, name: "Marcus Rodriguez", role: "UI/UX Designer", salary: 72000, age: 31, gender: "Male", image: "https://i.pravatar.cc/150?u=marcus", bio: "Focused on accessible design. Has a passion for minimalist architecture.", history: [] },
+            { id: 103, name: "Aisha Khan", role: "Marketing Manager", salary: 81000, age: 34, gender: "Female", image: "https://i.pravatar.cc/150?u=aisha", bio: "Expert in digital growth strategies. Former journalist and marathon runner.", history: [] },
+            { id: 104, name: "James Wilson", role: "Backend Engineer", salary: 88000, age: 27, gender: "Male", image: "https://i.pravatar.cc/150?u=james", bio: "Database wizard and cybersecurity enthusiast. Built his own smart home from scratch.", history: [] },
+            { id: 105, name: "Elena Rossi", role: "Product Owner", salary: 105000, age: 30, gender: "Female", image: "https://i.pravatar.cc/150?u=elena", bio: "Bridges the gap between users and tech. Loves classical music and Italian cooking.", history: [] }
+        ];
+
+        let employeeData = JSON.parse(localStorage.getItem('employeeData')) || initialData;
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function renderAdmin(data) {
+            const body = document.getElementById('adminTableBody');
+            let outCount = 0;
+            const totalPayroll = data.reduce((sum, emp) => sum + (emp.salary / 12), 0);
+
+            body.innerHTML = data.map((emp, i) => {
+                const isInactive = emp.status === 'Inactive';
+                if (isInactive) outCount++;
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-cell" style="display:flex; align-items:center;">
+                                <img src="${emp.image}" class="avatar" style="width:35px; height:35px; border-radius:50%; margin-right:12px;">
+                                <span class="clickable-name" onclick="viewProfile(${i})">${emp.name}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge" style="background:#f1f5f9; color:#475569; padding:4px 8px; border-radius:6px; font-size:0.8rem;">${emp.role}</span></td>
+                        <td><span class="status-badge ${isInactive ? 'status-inactive' : 'status-active'}">${isInactive ? 'Off Duty' : 'Active'}</span></td>
+                        <td class="desktop-only">$${emp.salary.toLocaleString()}</td>
+                        <td><button class="btn-manage" onclick="openManager(${i})">Manage</button></td>
+                    </tr>`;
+            }).join('');
+
+            document.getElementById('totalStaffCount').innerText = data.length;
+            document.getElementById('outCount').innerText = outCount;
+            document.getElementById('totalPayroll').innerText = `$${totalPayroll.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+        }
+
+        window.viewProfile = (i) => {
+            const emp = employeeData[i];
+            const details = document.getElementById('profileDetails');
+            details.innerHTML = `
+                <img src="${emp.image}" class="profile-img-circle">
+                <h2 style="margin: 0; color: #1e293b;">${emp.name}</h2>
+                <div style="color: var(--primary); font-weight: 700; font-size: 0.8rem; margin-top: 4px;">${emp.role}</div>
+                
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">${emp.age}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">${emp.gender}</div>
+                    </div>
+                </div>
+
+                <div class="profile-bio">
+                    <div class="info-label" style="margin-bottom: 4px; color: var(--primary);">Biography</div>
+                    ${emp.bio}
+                </div>
+            `;
+            document.getElementById('profileModal').style.display = 'flex';
+        };
+
+        window.closeProfile = () => { document.getElementById('profileModal').style.display = 'none'; };
+
+        window.openManager = (i) => {
+            currentEditIndex = i;
+            document.getElementById('modalTitle').innerText = `Manage ${employeeData[i].name}`;
+            document.getElementById('manageModal').style.display = 'flex';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('manageModal').style.display = 'none';
+            document.getElementById('inputArea').innerHTML = '';
+            document.getElementById('actionSelect').value = '';
+        };
+
+        window.toggleActionFields = () => {
+            const action = document.getElementById('actionSelect').value;
+            const area = document.getElementById('inputArea');
+            area.innerHTML = '';
+
+            if (action === 'dayoff') {
+                area.innerHTML = `<p style="margin-top:15px; color:#64748b; font-size:0.85rem;">This will mark the employee as 'Off Duty' and move them to the Archive list.</p>`;
+            } else if (action === 'paidvacation') {
+                area.innerHTML = `
+                    <div class="input-group"><label>Duration (Days)</label><input type="number" id="leaveDays" value="5"></div>
+                    <div class="input-group"><label>Daily Rate ($)</label><input type="number" id="dailyRate" value="200"></div>`;
+            } else if (action === 'promote') {
+                area.innerHTML = `
+                    <div class="input-group">
+                        <label>New Role</label>
+                        <select id="actionVal">
+                            <option value="Sales Supervisor">Sales Supervisor</option>
+                            <option value="Sales Manager">Sales Manager</option>
+                            <option value="Director">Director</option>
+                            <option value="Vice President">Vice President</option>
+                            <option value="Board of Directors">Board of Directors</option>
+                            <option value="CEO">CEO</option>
+                        </select>
+                    </div>`;
+            } else if (action === 'raise' || action === 'pay') {
+                area.innerHTML = `<div class="input-group"><label>Amount ($)</label><input type="number" id="actionVal" value="500"></div>`;
+            }
+        };
+
+        document.getElementById('confirmBtn').onclick = () => {
+            const action = document.getElementById('actionSelect').value;
+            const emp = employeeData[currentEditIndex];
+            const today = new Date().toLocaleDateString();
+
+            if (action === 'dayoff') {
+                emp.status = 'Inactive';
+                emp.history.push({ type: "Day Off", detail: "Sent home to relax", date: today });
+                let firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
+                firedData.push(employeeData.splice(currentEditIndex, 1)[0]);
+                localStorage.setItem('firedEmployees', JSON.stringify(firedData));
+                showToast("Employee moved to Archive");
+            } else if (action === 'paidvacation') {
+                const days = document.getElementById('leaveDays').value;
+                emp.history.push({ type: "Paid Vacation", detail: `${days} days`, date: today });
+                showToast("Vacation recorded");
+            } else if (action === 'promote') {
+                emp.role = document.getElementById('actionVal').value;
+                emp.history.push({ type: "Promotion", detail: emp.role, date: today });
+                showToast("Promotion applied");
+            } else if (action === 'raise') {
+                const amt = parseInt(document.getElementById('actionVal').value);
+                emp.salary += amt;
+                emp.history.push({ type: "Salary Raise", detail: `+$${amt}`, date: today });
+                showToast("Salary updated");
+            } else if (action === 'pay') {
+                // FIXED: Now correctly converts to number and updates the salary amount
+                const amt = parseInt(document.getElementById('actionVal').value);
+                emp.salary += amt;
+                emp.history.push({ type: "Bonus", detail: `Paid $${amt}`, date: today });
+                showToast("Bonus paid and added to total");
+            } else if (action === 'fire') {
+                emp.status = 'Terminated';
+                let firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
+                firedData.push(employeeData.splice(currentEditIndex, 1)[0]);
+                localStorage.setItem('firedEmployees', JSON.stringify(firedData));
+                showToast("Employee terminated");
+            }
+
+            localStorage.setItem('employeeData', JSON.stringify(employeeData));
+            renderAdmin(employeeData);
+            closeModal();
+        };
+
+        window.onclick = function(event) {
+            const pModal = document.getElementById('profileModal');
+            const mModal = document.getElementById('manageModal');
+            if (event.target == pModal) closeProfile();
+            if (event.target == mModal) closeModal();
+        }
+
+        renderAdmin(employeeData);
+    </script>
 </body>
 </html>

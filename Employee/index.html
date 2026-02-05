@@ -3,22 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Portal</title>
+    <title>WorkforceOS | Employee Portal</title>
     <link rel="stylesheet" href="../src/Style.css">
+    
+    <style>
+        /* This replaces employee-style.css to stop the MIME error */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .avatar-md {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .feedback-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .feedback-header {
+            font-weight: bold;
+            color: #1d4ed8;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-row {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .text-center { text-align: center; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">StaffPortal</div>
-        <ul class="nav-links"><li><a href="../index.html">Exit</a></li></ul>
+        <div class="nav-brand">Workforce<span>OS</span></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html" class="active">My Dashboard</a></li>
+        </ul>
     </nav>
+
     <main class="container">
-        <div id="loginSection" class="card">
-            <h2 class="text-center">Sign In</h2>
-            <div id="loginList" class="login-radio-group"></div>
-            <button onclick="loginEmployee()" class="btn-primary full-width" style="margin-top:20px;">Access Records</button>
-        </div>
-        <div id="profileSection" class="card" style="display:none;"></div>
+        <div id="staffContent">
+            </div>
     </main>
-    <script src="../src/script.js"></script>
+
+    <script>
+        // Use the same key as your Admin page
+        const data = JSON.parse(localStorage.getItem('employeeData')) || [];
+        const userIndex = localStorage.getItem('currentUserIndex');
+
+        function init() {
+            const container = document.getElementById('staffContent');
+            
+            // Toggle view based on login state
+            if (userIndex === null) {
+                renderSelectionList(container);
+            } else {
+                renderPrivateDashboard(container, data[userIndex]);
+            }
+        }
+
+        function renderSelectionList(container) {
+            container.innerHTML = `
+                <div class="card text-center">
+                    <h1>Staff Login</h1>
+                    <p>Select your profile to view your latest updates.</p>
+                    <div class="staff-grid">
+                        ${data.map((emp, i) => `
+                            <div class="card employee-select-card text-center" onclick="login(${i})">
+                                <img src="${emp.image}" class="avatar-md">
+                                <h3>${emp.name}</h3>
+                                <p class="stat-label">${emp.role}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+        }
+
+        function renderPrivateDashboard(container, emp) {
+            container.innerHTML = `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
+                        <div class="user-cell">
+                            <img src="${emp.image}" class="avatar" style="width: 50px; height: 50px;">
+                            <h2 style="margin:0;">Welcome, ${emp.name}</h2>
+                        </div>
+                        <button onclick="logout()" class="btn-secondary">Logout</button>
+                    </div>
+                    
+                    <div class="status-row">
+                        <span class="stat-label">Current Status:</span> 
+                        <span class="badge status-active">● Active</span>
+                    </div>
+
+                    ${emp.feedback ? `
+                        <div class="feedback-box">
+                            <div class="feedback-header">💬 Message from Management</div>
+                            <p style="margin:0;">${emp.feedback}</p>
+                        </div>
+                    ` : `
+                        <div class="feedback-box" style="border-left-color: #cbd5e1; background: #f8fafc;">
+                            <p style="margin:0; color: #64748b;">No new messages from management.</p>
+                        </div>
+                    `}
+
+                    <div style="margin-top: 20px;">
+                        <h4 class="stat-label">Current Role</h4>
+                        <p><strong>${emp.role}</strong></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.login = (i) => {
+            localStorage.setItem('currentUserIndex', i);
+            location.reload();
+        };
+
+        window.logout = () => {
+            localStorage.removeItem('currentUserIndex');
+            location.reload();
+        };
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

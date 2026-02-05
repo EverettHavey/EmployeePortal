@@ -3,37 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminated Employees</title>
+    <title>WorkforceOS | Archive</title>
     <link rel="stylesheet" href="../src/Style.css">
+    <style>
+        .status-off { background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
+        .status-fired { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
+        .btn-reactivate { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">AdminPanel | Archive</div>
+        <div class="nav-brand">Workforce<span>OS</span></div>
         <ul class="nav-links">
             <li><a href="../index.html">Home</a></li>
             <li><a href="index.html">Active Staff</a></li>
-            <li><a href="fired.html" class="active">Fired List 📁</a></li>
+            <li><a href="fired.html" class="active">Archive 📁</a></li>
         </ul>
     </nav>
 
     <main class="container">
         <section class="card">
-            <h2>Terminated Employees</h2>
-            <p>View history or rehire employees below.</p>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="firedTableBody"></tbody>
-                </table>
-            </div>
+            <h2 style="margin-bottom:20px;">Employee Archive</h2>
+            <table>
+                <thead>
+                    <tr><th>Employee</th><th>Reason</th><th>Action</th></tr>
+                </thead>
+                <tbody id="firedTableBody"></tbody>
+            </table>
         </section>
     </main>
-    <script src="../src/script.js"></script>
+
+    <script>
+        function renderArchive() {
+            const firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
+            const body = document.getElementById('firedTableBody');
+            body.innerHTML = firedData.map((emp, i) => `
+                <tr>
+                    <td><div class="user-cell"><img src="${emp.image}" class="avatar"><span>${emp.name}</span></div></td>
+                    <td><span class="${emp.status === 'Inactive' ? 'status-off' : 'status-fired'}">${emp.status === 'Inactive' ? 'Day Off' : 'Fired'}</span></td>
+                    <td><button class="btn-reactivate" onclick="rehire(${i})">${emp.status === 'Inactive' ? 'Reactivate' : 'Rehire'}</button></td>
+                </tr>`).join('');
+        }
+
+        window.rehire = (index) => {
+            let firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
+            let employeeData = JSON.parse(localStorage.getItem('employeeData')) || [];
+            let emp = firedData.splice(index, 1)[0];
+            emp.status = 'Active';
+            employeeData.push(emp);
+            localStorage.setItem('firedEmployees', JSON.stringify(firedData));
+            localStorage.setItem('employeeData', JSON.stringify(employeeData));
+            renderArchive();
+        };
+        renderArchive();
+    </script>
 </body>
 </html>
