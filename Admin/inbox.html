@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkforceOS | Admin Inbox</title>
+    <link rel="stylesheet" href="../src/Style.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* Inbox Items */
+        .inbox-item { 
+            background: white; padding: 20px; border-radius: 16px; 
+            border: 1px solid #e2e8f0; margin-bottom: 15px; 
+            display: flex; justify-content: space-between; align-items: flex-start; 
+        }
+
+        .sender-info { flex: 1; padding-right: 20px; }
+        .message-text { font-size: 0.95rem; color: #475569; line-height: 1.5; margin: 10px 0; }
+
+        .admin-reply-box { 
+            background: #f1f5f9; padding: 12px; border-radius: 12px; 
+            border-left: 4px solid var(--success); font-size: 0.9rem;
+        }
+
+        /* Action Group */
+        .action-group { display: flex; flex-direction: column; gap: 8px; min-width: 120px; }
+        .btn-action { 
+            padding: 10px 16px; border-radius: 10px; font-size: 0.85rem; 
+            font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; 
+            text-align: center;
+        }
+        .btn-reply { background: var(--primary); color: white; border: none; }
+
+        /* --- NEW MODAL STYLES --- */
+        .custom-modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; z-index: 3000;
+        }
+        .modal-card {
+            background: white; padding: 24px; border-radius: 20px;
+            width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .modal-card textarea {
+            width: 100%; height: 120px; margin: 15px 0; padding: 12px;
+            border: 1px solid #e2e8f0; border-radius: 12px; font-family: inherit;
+            box-sizing: border-box; resize: none;
+        }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+
+        @media (max-width: 600px) {
+            .inbox-item { flex-direction: column; }
+            .action-group { flex-direction: row; width: 100%; margin-top: 15px; }
+            .btn-action { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">Workforce<span>OS</span></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html">Staff</a></li>
+            <li><a href="inbox.html" class="active">Inbox ✉️</a></li>
+            <li><a href="fired.html">Archive 📁</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h2>Employee Messages</h2>
+        <div id="adminInbox"></div>
+    </main>
+
+    <div id="replyModal" class="custom-modal">
+        <div class="modal-card">
+            <h3 id="replyToTitle" style="margin:0;">Reply to Sarah</h3>
+            <textarea id="replyTextarea" placeholder="Type your response..."></textarea>
+            <div class="modal-btns">
+                <button onclick="closeReplyModal()" style="background:#f1f5f9; color:#475569;">Cancel</button>
+                <button onclick="saveReply()" style="background:var(--primary); color:white;">Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMsgId = null;
+
+        function loadInbox() {
+            const allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            const container = document.getElementById('adminInbox');
+            if (allMessages.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#94a3b8;">Inbox is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = [...allMessages].reverse().map(m => `
+                <div class="inbox-item">
+                    <div class="sender-info">
+                        <small style="color:#94a3b8;">${m.date}</small>
+                        <h4>${m.employeeName}</h4>
+                        <p class="message-text">"${m.text}"</p>
+                        ${m.adminReply ? `<div class="admin-reply-box"><strong>Response:</strong> ${m.adminReply}</div>` : ''}
+                    </div>
+                    <div class="action-group">
+                        <button class="btn-action btn-reply" onclick="openReplyModal(${m.id}, '${m.employeeName}')">Reply</button>
+                        <button class="btn-action" onclick="deleteMessage(${m.id})" style="color:var(--danger)">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal Logic
+        function openReplyModal(id, name) {
+            currentMsgId = id;
+            document.getElementById('replyToTitle').innerText = `Reply to ${name}`;
+            
+            // Pre-fill if there's already a reply
+            const allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            const msg = allMessages.find(m => m.id === id);
+            document.getElementById('replyTextarea').value = msg.adminReply || "";
+            
+            document.getElementById('replyModal').style.display = 'flex';
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').style.display = 'none';
+        }
+
+        function saveReply() {
+            const replyText = document.getElementById('replyTextarea').value;
+            let allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            const idx = allMessages.findIndex(m => m.id === currentMsgId);
+            
+            if (idx !== -1) {
+                allMessages[idx].adminReply = replyText;
+                localStorage.setItem('workforceMessages', JSON.stringify(allMessages));
+                loadInbox();
+                closeReplyModal();
+            }
+        }
+
+        function deleteMessage(id) {
+            let allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            allMessages = allMessages.filter(m => m.id !== id);
+            localStorage.setItem('workforceMessages', JSON.stringify(allMessages));
+            loadInbox();
+        }
+
+        loadInbox();
+    </script>
+</body>
+</html>

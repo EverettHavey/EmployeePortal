@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkforceOS | My Messages</title>
+    <link rel="stylesheet" href="../src/Style.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg-body: #f8fafc;
+        }
+
+        body { background: var(--bg-body); font-family: 'Inter', sans-serif; margin: 0; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        /* Message History Styling */
+        #messageHistory { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+
+        .msg-card { 
+            background: white; 
+            padding: 16px; 
+            border-radius: 16px; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .msg-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px; 
+            font-size: 0.75rem; 
+            color: #94a3b8; 
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .msg-body { 
+            color: #1e293b; 
+            line-height: 1.5; 
+            font-size: 0.95rem;
+            word-wrap: break-word; /* Prevents long text from breaking layout */
+        }
+
+        .reply-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .reply-tag { 
+            color: var(--primary); 
+            font-weight: 700; 
+            font-size: 0.85rem; 
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .status-pending {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #f59e0b;
+            background: #fef3c7;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Compose Box Styling */
+        .compose-box { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            border: 1px solid #e2e8f0;
+        }
+
+        .compose-box h4 { margin-top: 0; color: #1e293b; }
+
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            margin: 12px 0; 
+            font-family: inherit; 
+            font-size: 1rem;
+            resize: none; 
+            box-sizing: border-box; /* Crucial for mobile width */
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
+            height: 80px;
+        }
+
+        .btn-send { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            width: 100%; 
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-send:active { opacity: 0.8; }
+
+        /* --- MOBILE MEDIA QUERY --- */
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            
+            .msg-card { padding: 12px; }
+
+            .msg-header { flex-direction: column; gap: 4px; }
+
+            .compose-box {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                margin: 0 -15px; /* Pulls box to edges of mobile screen */
+                padding: 15px;
+            }
+
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Workforce<span>OS</span></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html" class="active">My Dashboard</a></li>
+            <li><a href="message.html" class="active">Messages</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h2 style="margin-bottom: 20px; color: #1e293b;">Support Inbox</h2>
+        
+        <div id="messageHistory">
+            </div>
+
+        <div class="compose-box">
+            <h4>New Message</h4>
+            <textarea id="msgInput" placeholder="How can the Admin help you today?"></textarea>
+            <button class="btn-send" onclick="sendMessage()">Send to Admin</button>
+        </div>
+    </main>
+
+    <script>
+        // Simulating the logged-in user
+        const currentUser = { name: "Sarah Chen", id: 101 };
+
+        function loadMessages() {
+            const allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            const myMessages = allMessages.filter(m => m.employeeId === currentUser.id);
+            const container = document.getElementById('messageHistory');
+            
+            if (myMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px; color:#94a3b8;">
+                        <p>No messages yet. Send your first inquiry below.</p>
+                    </div>`;
+                return;
+            }
+
+            // Render newest at the bottom to follow chat flow
+            container.innerHTML = myMessages.map(m => `
+                <div class="msg-card">
+                    <div class="msg-header">
+                        <span>To: Administration</span>
+                        <span>${m.date}</span>
+                    </div>
+                    <div class="msg-body">${m.text}</div>
+                    
+                    ${m.adminReply ? `
+                        <div class="reply-section">
+                            <span class="reply-tag">Admin Response</span>
+                            <div class="msg-body" style="color: #475569;">${m.adminReply}</div>
+                        </div>
+                    ` : `
+                        <span class="status-pending">Waiting for review...</span>
+                    `}
+                </div>
+            `).join('');
+
+            // Scroll to bottom so newest message is visible
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value;
+            if (!text.trim()) return;
+
+            const allMessages = JSON.parse(localStorage.getItem('workforceMessages')) || [];
+            const newMessage = {
+                id: Date.now(),
+                employeeId: currentUser.id,
+                employeeName: currentUser.name,
+                text: text,
+                date: new Date().toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' }),
+                adminReply: null,
+                status: 'unread'
+            };
+
+            allMessages.push(newMessage);
+            localStorage.setItem('workforceMessages', JSON.stringify(allMessages));
+            input.value = '';
+            loadMessages();
+        }
+
+        // Initial Load
+        loadMessages();
+    </script>
+</body>
+</html>
