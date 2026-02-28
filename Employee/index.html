@@ -4,56 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkforceOS | Employee Portal</title>
+    <link rel="stylesheet" href="../src/Style.css">
+    
     <style>
-        :root { --primary: #2563eb; --secondary: #64748b; }
-        body { font-family: sans-serif; background: #f8fafc; margin: 0; }
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; }
-        
+        /* Specific styles for the login grid */
         .staff-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 30px;
         }
         
-        .employee-select-card { 
-            cursor: pointer; 
-            transition: transform 0.2s; 
-            border: 1px solid #e2e8f0;
+        .employee-select-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .employee-select-card:hover { transform: translateY(-5px); border-color: var(--primary); }
 
+        .employee-select-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
         .avatar-md {
-            width: 80px; height: 80px;
-            border-radius: 50%; object-fit: cover;
-            margin-bottom: 10px; border: 3px solid #f1f5f9;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
         }
 
         .feedback-box {
             background: #f0f7ff;
-            border-left: 4px solid var(--primary);
-            padding: 15px; margin-top: 20px;
-            border-radius: 8px; text-align: left;
+            border-left: 4px solid var(--primary, #2563eb);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: left;
         }
 
         .feedback-header {
-            font-weight: bold; color: #1d4ed8;
-            margin-bottom: 5px; font-size: 0.8rem;
+            font-weight: bold;
+            color: #1d4ed8;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
             text-transform: uppercase;
         }
 
-        .btn-secondary {
-            background: #64748b; color: white; border: none;
-            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+        .status-row {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
         }
 
-        .status-row { margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
         .text-center { text-align: center; }
-        .stat-label { color: #64748b; font-size: 0.9rem; display: block; }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-brand">Workforce<span>OS</span></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html" class="active">My Dashboard</a></li>
+            <li><a href="message.html">Message</a></li>
+        </ul>
+    </nav>
 
     <main class="container">
         <div id="staffContent">
@@ -61,7 +75,7 @@
     </main>
 
     <script>
-        // 1. ALL STAFF DATA (The "Good" List)
+        // 1. Full 7-staff data fallback to ensure "Good" data is always there
         const defaultStaff = [
             { id: 101, name: "Sarah Chen", role: "Lead Software Architect", salary: 115000, age: 29, gender: "Female", image: "https://i.pravatar.cc/150?u=sarah", bio: "Specializes in React and Node.js. A logic-driven leader who loves mountain biking.", history: ["Senior Dev at TechFlow"] },
             { id: 102, name: "Marcus Rodriguez", role: "Senior UI/UX Designer", salary: 78000, age: 31, gender: "Male", image: "https://i.pravatar.cc/150?u=elena", bio: "Focused on accessible design and minimalist aesthetics. Former street photographer.", history: ["Visual Designer at Studio Indigo"] },
@@ -72,10 +86,8 @@
             { id: 107, name: "Hannah Vance", role: "QA Automation Engineer", salary: 75000, age: 26, gender: "Female", image: "https://i.pravatar.cc/150?u=isaac", bio: "Detail-oriented bug hunter. Passionate about restoring vintage video games.", history: ["Junior QA at SoftTest"] }
         ];
 
-        // 2. INITIALIZE DATA
+        // 2. Load data from LocalStorage or use the defaultStaff
         let data = JSON.parse(localStorage.getItem('employeeData'));
-        
-        // If no data exists in localStorage, save the default staff list
         if (!data || data.length === 0) {
             localStorage.setItem('employeeData', JSON.stringify(defaultStaff));
             data = defaultStaff;
@@ -95,14 +107,14 @@
         function renderSelectionList(container) {
             container.innerHTML = `
                 <div class="card text-center">
-                    <h1>Staff Portal</h1>
-                    <p>Select your profile to sign in.</p>
+                    <h1>Staff Login</h1>
+                    <p>Select your profile to view your latest updates.</p>
                     <div class="staff-grid">
                         ${data.map((emp, i) => `
-                            <div class="card employee-select-card" onclick="login(${i})">
+                            <div class="card employee-select-card text-center" onclick="login(${i})">
                                 <img src="${emp.image}" class="avatar-md">
-                                <h3 style="margin:5px 0;">${emp.name}</h3>
-                                <span class="stat-label">${emp.role}</span>
+                                <h3>${emp.name}</h3>
+                                <p class="stat-label">${emp.role}</p>
                             </div>
                         `).join('')}
                     </div>
@@ -110,25 +122,38 @@
         }
 
         function renderPrivateDashboard(container, emp) {
-            if (!emp) { logout(); return; } // Safety check
+            if (!emp) { logout(); return; }
             container.innerHTML = `
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="display:flex; align-items:center; gap:15px;">
-                            <img src="${emp.image}" style="width:60px; height:60px; border-radius:50%;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
+                        <div class="user-cell" style="display:flex; align-items:center; gap:15px;">
+                            <img src="${emp.image}" class="avatar" style="width: 50px; height: 50px; border-radius:50%;">
                             <h2 style="margin:0;">Welcome, ${emp.name}</h2>
                         </div>
                         <button onclick="logout()" class="btn-secondary">Logout</button>
                     </div>
                     
-                    <div class="feedback-box">
-                        <div class="feedback-header">💬 Bio & Insights</div>
-                        <p style="margin:0;">${emp.bio}</p>
+                    <div class="status-row">
+                        <span class="stat-label">Current Status:</span> 
+                        <span class="badge status-active" style="color: #059669; font-weight:bold;">● Active</span>
                     </div>
 
+                    ${emp.feedback ? `
+                        <div class="feedback-box">
+                            <div class="feedback-header">💬 Message from Management</div>
+                            <p style="margin:0;">${emp.feedback}</p>
+                        </div>
+                    ` : `
+                        <div class="feedback-box" style="border-left-color: #cbd5e1; background: #f8fafc;">
+                            <p style="margin:0; color: #64748b;">No new messages from management.</p>
+                        </div>
+                    `}
+
                     <div style="margin-top: 20px;">
-                        <span class="stat-label">Official Role</span>
-                        <p style="font-size:1.2rem; margin:5px 0;"><strong>${emp.role}</strong></p>
+                        <h4 class="stat-label" style="margin-bottom:5px;">Professional Summary</h4>
+                        <p style="margin-top:0;">${emp.bio}</p>
+                        <h4 class="stat-label" style="margin-bottom:5px;">Current Role</h4>
+                        <p><strong>${emp.role}</strong></p>
                     </div>
                 </div>
             `;
