@@ -2,56 +2,78 @@
   {
     "id": 101,
     "name": "Sarah Chen",
-    "role": "Lead Developer",
-    "salary": 95000,
+    "role": "Lead Software Architect",
+    "salary": 115000,
     "age": 29,
     "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=sarah",
-    "bio": "Specializes in React and Node.js. Loves coffee and hiking on weekends.",
-    "history": []
+    "bio": "Specializes in React and Node.js. A logic-driven leader who loves mountain biking on weekends.",
+    "history": ["Senior Dev at TechFlow", "Open Source Contributor"]
   },
   {
     "id": 102,
     "name": "Marcus Rodriguez",
-    "role": "UI/UX Designer",
-    "salary": 72000,
+    "role": "Senior UI/UX Designer",
+    "salary": 78000,
     "age": 31,
     "gender": "Male",
     "image": "https://i.pravatar.cc/150?u=marcus",
-    "bio": "Focused on accessible design. Has a passion for minimalist architecture.",
-    "history": []
+    "bio": "Focused on accessible design and minimalist aesthetics. Former street photographer with an eye for detail.",
+    "history": ["Visual Designer at Studio Indigo", "Freelance Illustrator"]
   },
   {
     "id": 103,
     "name": "Aisha Khan",
-    "role": "Marketing Manager",
-    "salary": 81000,
+    "role": "Growth Marketing Manager",
+    "salary": 84000,
     "age": 34,
     "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=aisha",
-    "bio": "Expert in digital growth strategies. Former journalist and marathon runner.",
-    "history": []
+    "bio": "Expert in digital growth and viral storytelling. Former journalist and competitive marathon runner.",
+    "history": ["PR Specialist at Global Media", "Digital Lead at Spark"]
   },
   {
     "id": 104,
     "name": "James Wilson",
-    "role": "Backend Engineer",
-    "salary": 88000,
+    "role": "Backend Security Engineer",
+    "salary": 92000,
     "age": 27,
     "gender": "Male",
     "image": "https://i.pravatar.cc/150?u=james",
-    "bio": "Database wizard and cybersecurity enthusiast. Built his own smart home from scratch.",
-    "history": []
+    "bio": "Database wizard and cybersecurity enthusiast. Built his own automated greenhouse from scratch.",
+    "history": ["Security Analyst at Shield Logic", "Junior Backend at DevGrid"]
   },
   {
     "id": 105,
+    "name": "Isaac Crawford",
+    "role": "Senior Data Scientist",
+    "salary": 108000,
+    "age": 32,
+    "gender": "Male",
+    "image": "https://i.pravatar.cc/150?u=isaac",
+    "bio": "Predictive modeling specialist. Spends his weekends playing competitive chess and baking sourdough.",
+    "history": ["Data Analyst at QuantEdge", "Research Fellow at Tech-U"]
+  },
+  {
+    "id": 106,
     "name": "Elena Rossi",
-    "role": "Product Owner",
-    "salary": 105000,
+    "role": "Senior Product Owner",
+    "salary": 110000,
     "age": 30,
     "gender": "Female",
     "image": "https://i.pravatar.cc/150?u=elena",
-    "bio": "Bridges the gap between users and tech. Loves classical music and Italian cooking.",
-    "history": []
+    "bio": "Bridges the gap between users and tech. Passionate about classical music and gourmet Italian cooking.",
+    "history": ["Product Manager at FinTech", "Scrum Master at AlphaHub"]
+  },
+  {
+    "id": 107,
+    "name": "Hannah Vance",
+    "role": "QA Automation Engineer",
+    "salary": 75000,
+    "age": 26,
+    "gender": "Female",
+    "image": "https://i.pravatar.cc/150?u=hannah",
+    "bio": "Detail-oriented bug hunter. Passionate about automation frameworks and collecting vintage video games.",
+    "history": ["Junior QA at SoftTest", "Automation Intern at BetaWorks"]
   }
 ]
