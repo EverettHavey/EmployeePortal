@@ -17,7 +17,7 @@
     "salary": 78000,
     "age": 31,
     "gender": "Male",
-    "image": "https://i.pravatar.cc/150?u=marcus",
+    "image": "https://i.pravatar.cc/150?u=elena",
     "bio": "Focused on accessible design and minimalist aesthetics. Former street photographer with an eye for detail.",
     "history": ["Visual Designer at Studio Indigo", "Freelance Illustrator"]
   },
@@ -50,7 +50,7 @@
     "salary": 108000,
     "age": 32,
     "gender": "Male",
-    "image": "https://i.pravatar.cc/150?u=isaac",
+    "image": "https://i.pravatar.cc/150?u=hannah",
     "bio": "Predictive modeling specialist. Spends his weekends playing competitive chess and baking sourdough.",
     "history": ["Data Analyst at QuantEdge", "Research Fellow at Tech-U"]
   },
@@ -61,7 +61,7 @@
     "salary": 110000,
     "age": 30,
     "gender": "Female",
-    "image": "https://i.pravatar.cc/150?u=elena",
+    "image": "https://i.pravatar.cc/150?u=marcus",
     "bio": "Bridges the gap between users and tech. Passionate about classical music and gourmet Italian cooking.",
     "history": ["Product Manager at FinTech", "Scrum Master at AlphaHub"]
   },
@@ -72,7 +72,7 @@
     "salary": 75000,
     "age": 26,
     "gender": "Female",
-    "image": "https://i.pravatar.cc/150?u=hannah",
+    "image": "https://i.pravatar.cc/150?u=isaac",
     "bio": "Detail-oriented bug hunter. Passionate about automation frameworks and collecting vintage video games.",
     "history": ["Junior QA at SoftTest", "Automation Intern at BetaWorks"]
   }
