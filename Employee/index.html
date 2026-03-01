@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../src/Style.css">
     
     <style>
-        /* Specific styles for the login grid */
         .staff-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -17,14 +16,9 @@
         
         .employee-select-card {
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s;
         }
 
-        .employee-select-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
         .avatar-md {
             width: 80px;
             height: 80px;
@@ -35,7 +29,7 @@
 
         .feedback-box {
             background: #f0f7ff;
-            border-left: 4px solid var(--primary, #2563eb);
+            border-left: 4px solid var(--primary);
             padding: 15px;
             margin-top: 20px;
             border-radius: 8px;
@@ -70,29 +64,25 @@
     </nav>
 
     <main class="container">
-        <div id="staffContent">
-            </div>
+        <div id="staffContent"></div>
     </main>
 
     <script>
-        // 1. Full 7-staff data fallback to ensure "Good" data is always there
-        const defaultStaff = [
-            { id: 101, name: "Sarah Chen", role: "Lead Software Architect", salary: 115000, age: 29, gender: "Female", image: "https://i.pravatar.cc/150?u=sarah", bio: "Specializes in React and Node.js. A logic-driven leader who loves mountain biking.", history: ["Senior Dev at TechFlow"] },
-            { id: 102, name: "Marcus Rodriguez", role: "Senior UI/UX Designer", salary: 78000, age: 31, gender: "Male", image: "https://i.pravatar.cc/150?u=elena", bio: "Focused on accessible design and minimalist aesthetics. Former street photographer.", history: ["Visual Designer at Studio Indigo"] },
-            { id: 103, name: "Aisha Khan", role: "Growth Marketing Manager", salary: 84000, age: 34, gender: "Female", image: "https://i.pravatar.cc/150?u=aisha", bio: "Expert in digital growth and viral storytelling. Competitive marathon runner.", history: ["PR Specialist at Global Media"] },
-            { id: 104, name: "James Wilson", role: "Backend Security Engineer", salary: 92000, age: 27, gender: "Male", image: "https://i.pravatar.cc/150?u=james", bio: "Database wizard and white-hat hacker. Built his own automated greenhouse.", history: ["Security Analyst at Shield Logic"] },
-            { id: 105, name: "Isaac Crawford", role: "Senior Data Scientist", salary: 108000, age: 32, gender: "Male", image: "https://i.pravatar.cc/150?u=hannah", bio: "Predictive modeling specialist. Applies chess strategy to business analytics.", history: ["Data Analyst at QuantEdge"] },
-            { id: 106, name: "Elena Rossi", role: "Senior Product Owner", salary: 110000, age: 30, gender: "Female", image: "https://i.pravatar.cc/150?u=marcus", bio: "Bridges the gap between users and tech. Passionate about gourmet Italian cooking.", history: ["Product Manager at FinTech"] },
-            { id: 107, name: "Hannah Vance", role: "QA Automation Engineer", salary: 75000, age: 26, gender: "Female", image: "https://i.pravatar.cc/150?u=isaac", bio: "Detail-oriented bug hunter. Passionate about restoring vintage video games.", history: ["Junior QA at SoftTest"] }
+        // YOUR EXACT DATA LIST
+        const updatedStaff = [
+            { "id": 101, "name": "Sarah Chen", "role": "Lead Software Architect", "salary": 115000, "age": 29, "gender": "Female", "image": "https://i.pravatar.cc/150?u=sarah", "bio": "Specializes in React and Node.js. A logic-driven leader who loves mountain biking on weekends.", "history": ["Senior Dev at TechFlow", "Open Source Contributor"] },
+            { "id": 102, "name": "Marcus Rodriguez", "role": "Senior UI/UX Designer", "salary": 78000, "age": 31, "gender": "Male", "image": "https://i.pravatar.cc/150?u=elena", "bio": "Focused on accessible design and minimalist aesthetics. Former street photographer with an eye for detail.", "history": ["Visual Designer at Studio Indigo", "Freelance Illustrator"] },
+            { "id": 103, "name": "Aisha Khan", "role": "Growth Marketing Manager", "salary": 84000, "age": 34, "gender": "Female", "image": "https://i.pravatar.cc/150?u=aisha", "bio": "Expert in digital growth and viral storytelling. Former journalist and competitive marathon runner.", "history": ["PR Specialist at Global Media", "Digital Lead at Spark"] },
+            { "id": 104, "name": "James Wilson", "role": "Backend Security Engineer", "salary": 92000, "age": 27, "gender": "Male", "image": "https://i.pravatar.cc/150?u=james", "bio": "Database wizard and cybersecurity enthusiast. Built his own automated greenhouse from scratch.", "history": ["Security Analyst at Shield Logic", "Junior Backend at DevGrid"] },
+            { "id": 105, "name": "Isaac Crawford", "role": "Senior Data Scientist", "salary": 108000, "age": 32, "gender": "Male", "image": "https://i.pravatar.cc/150?u=hannah", "bio": "Predictive modeling specialist. Spends his weekends playing competitive chess and baking sourdough.", "history": ["Data Analyst at QuantEdge", "Research Fellow at Tech-U"] },
+            { "id": 106, "name": "Elena Rossi", "role": "Senior Product Owner", "salary": 110000, "age": 30, "gender": "Female", "image": "https://i.pravatar.cc/150?u=marcus", "bio": "Bridges the gap between users and tech. Passionate about classical music and gourmet Italian cooking.", "history": ["Product Manager at FinTech", "Scrum Master at AlphaHub"] },
+            { "id": 107, "name": "Hannah Vance", "role": "QA Automation Engineer", "salary": 75000, "age": 26, "gender": "Female", "image": "https://i.pravatar.cc/150?u=isaac", "bio": "Detail-oriented bug hunter. Passionate about automation frameworks and collecting vintage video games.", "history": ["Junior QA at SoftTest", "Automation Intern at BetaWorks"] }
         ];
 
-        // 2. Load data from LocalStorage or use the defaultStaff
-        let data = JSON.parse(localStorage.getItem('employeeData'));
-        if (!data || data.length === 0) {
-            localStorage.setItem('employeeData', JSON.stringify(defaultStaff));
-            data = defaultStaff;
-        }
+        // FORCE REFRESH: This line ensures your new image mappings overwrite any old saved data
+        localStorage.setItem('employeeData', JSON.stringify(updatedStaff));
 
+        const data = JSON.parse(localStorage.getItem('employeeData'));
         const userIndex = localStorage.getItem('currentUserIndex');
 
         function init() {
@@ -122,7 +112,6 @@
         }
 
         function renderPrivateDashboard(container, emp) {
-            if (!emp) { logout(); return; }
             container.innerHTML = `
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
@@ -135,7 +124,7 @@
                     
                     <div class="status-row">
                         <span class="stat-label">Current Status:</span> 
-                        <span class="badge status-active" style="color: #059669; font-weight:bold;">● Active</span>
+                        <span class="badge status-active">● Active</span>
                     </div>
 
                     ${emp.feedback ? `
@@ -150,9 +139,7 @@
                     `}
 
                     <div style="margin-top: 20px;">
-                        <h4 class="stat-label" style="margin-bottom:5px;">Professional Summary</h4>
-                        <p style="margin-top:0;">${emp.bio}</p>
-                        <h4 class="stat-label" style="margin-bottom:5px;">Current Role</h4>
+                        <h4 class="stat-label">Current Role</h4>
                         <p><strong>${emp.role}</strong></p>
                     </div>
                 </div>

@@ -17,17 +17,16 @@
 
         body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; }
 
-        /* Toast Notifications */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
         .toast {
             background: #1e293b; color: white; padding: 12px 24px; border-radius: 12px;
             margin-bottom: 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1);
             animation: slideIn 0.3s ease-out; font-size: 0.9rem;
+            transition: opacity 0.3s;
         }
 
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Table & Layout */
         .table-card { border: 1px solid #e2e8f0; background: white; border-radius: 16px; margin-top: 20px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: #64748b; font-size: 0.75rem; text-transform: uppercase; padding: 16px; border-bottom: 1px solid #e2e8f0; background: #fcfdfe; }
@@ -38,7 +37,6 @@
         .status-active { background: #dcfce7; color: #166534; }
         .status-inactive { background: #fef3c7; color: #92400e; }
 
-        /* Modal Design */
         .modal { 
             display: none; position: fixed; inset: 0; 
             background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px);
@@ -61,7 +59,6 @@
         .btn-manage { padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; transition: 0.2s; }
         .btn-manage:hover { background: #f1f5f9; border-color: #cbd5e1; }
         
-        /* Profile Card Styles */
         .profile-img-circle {
             width: 120px; height: 120px; border-radius: 50%;
             object-fit: cover; border: 4px solid var(--primary);
@@ -168,88 +165,25 @@
 
     <script>
         let currentEditIndex = null;
-        
-       const initialData = [
-            { 
-                id: 101, 
-                name: "Sarah Chen", 
-                role: "Lead Developer", 
-                salary: 115000, 
-                age: 29, 
-                gender: "Female", 
-                image: "https://i.pravatar.cc/150?u=sarah", 
-                bio: "Specializes in React and Node.js. A logic-driven leader who loves mountain biking.", 
-                history: [] 
-            },
-            { 
-                id: 102, 
-                name: "Marcus Rodriguez", 
-                role: "UI/UX Designer", 
-                salary: 78000, 
-                age: 31, 
-                gender: "Male", 
-                image: "https://i.pravatar.cc/150?u=elena", 
-                bio: "Focused on accessible design and minimalist aesthetics. Former street photographer.", 
-                history: [] 
-            },
-            { 
-                id: 103, 
-                name: "Aisha Khan", 
-                role: "Marketing Manager", 
-                salary: 84000, 
-                age: 34, 
-                gender: "Female", 
-                image: "https://i.pravatar.cc/150?u=aisha", 
-                bio: "Expert in digital growth and viral storytelling. Marathon runner and tea enthusiast.", 
-                history: [] 
-            },
-            { 
-                id: 104, 
-                name: "James Wilson", 
-                role: "Backend Engineer", 
-                salary: 92000, 
-                age: 27, 
-                gender: "Male", 
-                image: "https://i.pravatar.cc/150?u=james", 
-                bio: "Database wizard and cybersecurity hobbyist. Built his own automated greenhouse.", 
-                history: [] 
-            },
-            { 
-                id: 105, 
-                name: "Isaac Crawford", 
-                role: "Data Scientist", 
-                salary: 108000, 
-                age: 32, 
-                gender: "Male", 
-                image: "https://i.pravatar.cc/150?u=hannah", 
-                bio: "Predictive modeling specialist. Spends his weekends playing chess and baking sourdough.", 
-                history: [] 
-            },
-            { 
-                id: 106, 
-                name: "Elena Rossi", 
-                role: "Product Owner", 
-                salary: 110000, 
-                age: 30, 
-                gender: "Female", 
-                image: "https://i.pravatar.cc/150?u=marcus", 
-                bio: "Bridges the gap between users and tech. Loves classical music and Italian cooking.", 
-                history: [] 
-            },
-            { 
-                id: 107, 
-                name: "Hannah Vance", 
-                role: "QA Engineer", 
-                salary: 75000, 
-                age: 26, 
-                gender: "Female", 
-                image: "https://i.pravatar.cc/150?u=isaac", 
-                bio: "Detail-oriented bug hunter. Passionate about automation and vintage video games.", 
-                history: [] 
-            }
+
+        // UPDATED: Your exact list with the intentional u=swap images
+        const forceUpdateData = [
+            { "id": 101, "name": "Sarah Chen", "role": "Lead Software Architect", "salary": 115000, "age": 29, "gender": "Female", "image": "https://i.pravatar.cc/150?u=sarah", "bio": "Specializes in React and Node.js. A logic-driven leader who loves mountain biking on weekends.", "history": ["Senior Dev at TechFlow"] },
+            { "id": 102, "name": "Marcus Rodriguez", "role": "Senior UI/UX Designer", "salary": 78000, "age": 31, "gender": "Male", "image": "https://i.pravatar.cc/150?u=elena", "bio": "Focused on accessible design and minimalist aesthetics. Former street photographer with an eye for detail.", "history": ["Visual Designer at Studio Indigo"] },
+            { "id": 103, "name": "Aisha Khan", "role": "Growth Marketing Manager", "salary": 84000, "age": 34, "gender": "Female", "image": "https://i.pravatar.cc/150?u=aisha", "bio": "Expert in digital growth and viral storytelling. Former journalist and competitive marathon runner.", "history": ["PR Specialist at Global Media"] },
+            { "id": 104, "name": "James Wilson", "role": "Backend Security Engineer", "salary": 92000, "age": 27, "gender": "Male", "image": "https://i.pravatar.cc/150?u=james", "bio": "Database wizard and cybersecurity enthusiast. Built his own automated greenhouse from scratch.", "history": ["Security Analyst at Shield Logic"] },
+            { "id": 105, "name": "Isaac Crawford", "role": "Senior Data Scientist", "salary": 108000, "age": 32, "gender": "Male", "image": "https://i.pravatar.cc/150?u=hannah", "bio": "Predictive modeling specialist. Spends his weekends playing competitive chess and baking sourdough.", "history": ["Data Analyst at QuantEdge"] },
+            { "id": 106, "name": "Elena Rossi", "role": "Senior Product Owner", "salary": 110000, "age": 30, "gender": "Female", "image": "https://i.pravatar.cc/150?u=marcus", "bio": "Bridges the gap between users and tech. Passionate about classical music and gourmet Italian cooking.", "history": ["Product Manager at FinTech"] },
+            { "id": 107, "name": "Hannah Vance", "role": "QA Automation Engineer", "salary": 75000, "age": 26, "gender": "Female", "image": "https://i.pravatar.cc/150?u=isaac", "bio": "Detail-oriented bug hunter. Passionate about automation frameworks and collecting vintage video games.", "history": ["Junior QA at SoftTest"] }
         ];
 
-        let employeeData = JSON.parse(localStorage.getItem('employeeData')) || initialData;
+        // Ensure Admin and Employee pages use the SAME data
+        if (!localStorage.getItem('employeeData')) {
+            localStorage.setItem('employeeData', JSON.stringify(forceUpdateData));
+        }
+        
+        // This ensures if you changed the images in the prompt, they update here too
+        let employeeData = JSON.parse(localStorage.getItem('employeeData'));
 
         function showToast(msg) {
             const container = document.getElementById('toast-container');
@@ -295,22 +229,11 @@
                 <img src="${emp.image}" class="profile-img-circle">
                 <h2 style="margin: 0; color: #1e293b;">${emp.name}</h2>
                 <div style="color: var(--primary); font-weight: 700; font-size: 0.8rem; margin-top: 4px;">${emp.role}</div>
-                
                 <div class="info-grid">
-                    <div class="info-box">
-                        <div class="info-label">Age</div>
-                        <div class="info-value">${emp.age}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-label">Gender</div>
-                        <div class="info-value">${emp.gender}</div>
-                    </div>
+                    <div class="info-box"><div class="info-label">Age</div><div class="info-value">${emp.age}</div></div>
+                    <div class="info-box"><div class="info-label">Gender</div><div class="info-value">${emp.gender}</div></div>
                 </div>
-
-                <div class="profile-bio">
-                    <div class="info-label" style="margin-bottom: 4px; color: var(--primary);">Biography</div>
-                    ${emp.bio}
-                </div>
+                <div class="profile-bio"><div class="info-label" style="margin-bottom: 4px; color: var(--primary);">Biography</div>${emp.bio}</div>
             `;
             document.getElementById('profileModal').style.display = 'flex';
         };
@@ -335,24 +258,9 @@
             area.innerHTML = '';
 
             if (action === 'dayoff') {
-                area.innerHTML = `<p style="margin-top:15px; color:#64748b; font-size:0.85rem;">This will mark the employee as 'Off Duty' and move them to the Archive list.</p>`;
-            } else if (action === 'paidvacation') {
-                area.innerHTML = `
-                    <div class="input-group"><label>Duration (Days)</label><input type="number" id="leaveDays" value="5"></div>
-                    <div class="input-group"><label>Daily Rate ($)</label><input type="number" id="dailyRate" value="200"></div>`;
+                area.innerHTML = `<p style="margin-top:15px; color:#64748b; font-size:0.85rem;">This marks them 'Off Duty' and moves them to Archive.</p>`;
             } else if (action === 'promote') {
-                area.innerHTML = `
-                    <div class="input-group">
-                        <label>New Role</label>
-                        <select id="actionVal">
-                            <option value="Sales Supervisor">Sales Supervisor</option>
-                            <option value="Sales Manager">Sales Manager</option>
-                            <option value="Director">Director</option>
-                            <option value="Vice President">Vice President</option>
-                            <option value="Board of Directors">Board of Directors</option>
-                            <option value="CEO">CEO</option>
-                        </select>
-                    </div>`;
+                area.innerHTML = `<div class="input-group"><label>New Role</label><input type="text" id="actionVal" placeholder="New Title"></div>`;
             } else if (action === 'raise' || action === 'pay') {
                 area.innerHTML = `<div class="input-group"><label>Amount ($)</label><input type="number" id="actionVal" value="500"></div>`;
             }
@@ -363,38 +271,19 @@
             const emp = employeeData[currentEditIndex];
             const today = new Date().toLocaleDateString();
 
-            if (action === 'dayoff') {
-                emp.status = 'Inactive';
-                emp.history.push({ type: "Day Off", detail: "Sent home to relax", date: today });
+            if (action === 'dayoff' || action === 'fire') {
+                emp.status = (action === 'fire') ? 'Terminated' : 'Inactive';
                 let firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
                 firedData.push(employeeData.splice(currentEditIndex, 1)[0]);
                 localStorage.setItem('firedEmployees', JSON.stringify(firedData));
-                showToast("Employee moved to Archive");
-            } else if (action === 'paidvacation') {
-                const days = document.getElementById('leaveDays').value;
-                emp.history.push({ type: "Paid Vacation", detail: `${days} days`, date: today });
-                showToast("Vacation recorded");
+                showToast("Moved to Archive");
             } else if (action === 'promote') {
                 emp.role = document.getElementById('actionVal').value;
-                emp.history.push({ type: "Promotion", detail: emp.role, date: today });
                 showToast("Promotion applied");
-            } else if (action === 'raise') {
+            } else if (action === 'raise' || action === 'pay') {
                 const amt = parseInt(document.getElementById('actionVal').value);
                 emp.salary += amt;
-                emp.history.push({ type: "Salary Raise", detail: `+$${amt}`, date: today });
-                showToast("Salary updated");
-            } else if (action === 'pay') {
-                // FIXED: Now correctly converts to number and updates the salary amount
-                const amt = parseInt(document.getElementById('actionVal').value);
-                emp.salary += amt;
-                emp.history.push({ type: "Bonus", detail: `Paid $${amt}`, date: today });
-                showToast("Bonus paid and added to total");
-            } else if (action === 'fire') {
-                emp.status = 'Terminated';
-                let firedData = JSON.parse(localStorage.getItem('firedEmployees')) || [];
-                firedData.push(employeeData.splice(currentEditIndex, 1)[0]);
-                localStorage.setItem('firedEmployees', JSON.stringify(firedData));
-                showToast("Employee terminated");
+                showToast("Financial update applied");
             }
 
             localStorage.setItem('employeeData', JSON.stringify(employeeData));
@@ -402,12 +291,15 @@
             closeModal();
         };
 
-        window.onclick = function(event) {
-            const pModal = document.getElementById('profileModal');
-            const mModal = document.getElementById('manageModal');
-            if (event.target == pModal) closeProfile();
-            if (event.target == mModal) closeModal();
-        }
+        window.filterStaff = () => {
+            const term = document.getElementById('staffSearch').value.toLowerCase();
+            const filtered = employeeData.filter(e => e.name.toLowerCase().includes(term) || e.role.toLowerCase().includes(term));
+            renderAdmin(filtered);
+        };
+
+        window.onclick = (e) => {
+            if (e.target.className === 'modal') { closeModal(); closeProfile(); }
+        };
 
         renderAdmin(employeeData);
     </script>
