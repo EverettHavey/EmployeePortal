@@ -15,7 +15,7 @@
             --bg-glass: rgba(255, 255, 255, 0.9);
         }
 
-        body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; }
+        body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; margin: 0; }
 
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
         .toast {
@@ -28,10 +28,20 @@
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
         .table-card { border: 1px solid #e2e8f0; background: white; border-radius: 16px; margin-top: 20px; overflow: hidden; }
+        .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
+        
         th { text-align: left; color: #64748b; font-size: 0.75rem; text-transform: uppercase; padding: 16px; border-bottom: 1px solid #e2e8f0; background: #fcfdfe; }
-        td { padding: 16px; border-bottom: 1px solid #f1f5f9; }
+        td { padding: 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
         tr:hover { background-color: #f8fafc; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            /* Salary display is now enabled by default */
+            .table-controls { flex-direction: column; align-items: flex-start !important; gap: 10px; }
+            #staffSearch { width: 100% !important; }
+            .modal-content { width: 90%; padding: 20px; }
+        }
 
         .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
         .status-active { background: #dcfce7; color: #166534; }
@@ -119,7 +129,7 @@
                             <th>Employee</th>
                             <th>Role</th>
                             <th>Status</th>
-                            <th class="desktop-only">Salary</th>
+                            <th>Salary</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -151,7 +161,7 @@
                 <div id="inputArea"></div>
             </div>
             <div class="modal-footer" style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
-                <button id="confirmBtn" class="btn-primary" style="width: 100%; padding: 14px;">Apply Changes</button>
+                <button id="confirmBtn" class="btn-primary" style="width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">Apply Changes</button>
             </div>
         </div>
     </div>
@@ -203,13 +213,13 @@
                     <tr>
                         <td>
                             <div class="user-cell" style="display:flex; align-items:center;">
-                                <img src="${emp.image}" class="avatar" style="width:35px; height:35px; border-radius:50%; margin-right:12px;">
+                                <img src="${emp.image}" class="avatar" style="width:30px; height:30px; border-radius:50%; margin-right:8px;">
                                 <span class="clickable-name" onclick="viewProfile(${i})">${emp.name}</span>
                             </div>
                         </td>
-                        <td><span class="badge" style="background:#f1f5f9; color:#475569; padding:4px 8px; border-radius:6px; font-size:0.8rem;">${emp.role}</span></td>
+                        <td><span class="badge" style="background:#f1f5f9; color:#475569; padding:4px 8px; border-radius:6px; font-size:0.75rem;">${emp.role}</span></td>
                         <td><span class="status-badge ${isInactive ? 'status-inactive' : 'status-active'}">${isInactive ? 'Off Duty' : 'Active'}</span></td>
-                        <td class="desktop-only">$${emp.salary.toLocaleString()}</td>
+                        <td>$${emp.salary.toLocaleString()}</td> 
                         <td><button class="btn-manage" onclick="openManager(${i})">Manage</button></td>
                     </tr>`;
             }).join('');
@@ -263,10 +273,14 @@
                         <select id="actionVal">
                             <option value="Department Director">Department Director</option>
                             <option value="Principal Engineer">Principal Engineer</option>
+                            <option value="Board Of Directors">Board Of Directors</option>
                             <option value="Chief Operations Officer">Chief Operations Officer</option>
                             <option value="Chief Financial Officer">Chief Financial Officer</option>
                             <option value="Vice President">Vice President</option>
+                            <option value="General Manager">General Manager</option>
                             <option value="VP of Product">VP of Product</option>
+                            <option value="Lead Music Director">Lead Music Director</option>
+                            <option value="Regional Manager">Regional Manager</option>
                             <option value="Executive Creative Director">Executive Creative Director</option>
                         </select>
                     </div>`;
@@ -274,11 +288,11 @@
                 area.innerHTML = `
                     <div class="input-group">
                         <label>Duration (Days)</label>
-                        <input type="number" id="vacationDays" placeholder="7">
+                        <input type="number" id="vacationDays" value="7">
                     </div>
                     <div class="input-group">
                         <label>Daily Stipend ($)</label>
-                        <input type="number" id="vacationRate" placeholder="200">
+                        <input type="number" id="vacationRate" value="200">
                     </div>`;
             } else if (action === 'raise' || action === 'pay') {
                 area.innerHTML = `<div class="input-group"><label>Amount ($)</label><input type="number" id="actionVal" value="500"></div>`;
@@ -288,6 +302,8 @@
         document.getElementById('confirmBtn').onclick = () => {
             const action = document.getElementById('actionSelect').value;
             const emp = employeeData[currentEditIndex];
+
+            if (!action) return;
 
             if (action === 'dayoff' || action === 'fire') {
                 emp.status = (action === 'fire') ? 'Terminated' : 'Inactive';
