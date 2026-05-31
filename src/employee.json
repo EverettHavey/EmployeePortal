@@ -75,5 +75,60 @@
     "image": "https://i.pravatar.cc/150?u=isaac",
     "bio": "Detail-oriented bug hunter. Passionate about automation frameworks and collecting vintage video games.",
     "history": ["Junior QA at SoftTest", "Automation Intern at BetaWorks"]
+  },
+  {
+    "id": 108,
+    "name": "Ethan Caldwell",
+    "role": "Junior Software Engineer",
+    "salary": 68000,
+    "age": 22,
+    "gender": "Male",
+    "image": "images/Staff100.webp",
+    "bio": "Fresh graduate eager to optimize backend performance. Enjoys competitive chess and formal debate.",
+    "history": ["Software Engineering Intern at TechCorp", "Computer Science Peer Tutor"]
+  },
+  {
+    "id": 109,
+    "name": "Marcus Vance",
+    "role": "UI/UX Designer",
+    "salary": 85000,
+    "age": 28,
+    "gender": "Male",
+    "image": "images/Staff200.webp",
+    "bio": "Visual storyteller focusing on minimalist mobile interfaces. Passionate about specialty coffee and urban photography.",
+    "history": ["Graphic Designer at CreativeStudio", "Freelance UI Consultant"]
+  },
+  {
+    "id": 110,
+    "name": "Julian Sterling",
+    "role": "VP of Global Sales",
+    "salary": 165000,
+    "age": 44,
+    "gender": "Male",
+    "image": "images/Staff300.webp",
+    "bio": "Strategic growth leader managing enterprise accounts. Aviation enthusiast and avid golfer.",
+    "history": ["Director of Business Development at ScaleUp", "Senior Account Executive at EnterpriseSoft"]
+  },
+  {
+    "id": 111,
+    "name": "Derek Reynolds",
+    "role": "DevOps Engineer",
+    "salary": 115000,
+    "age": 31,
+    "gender": "Male",
+    "image": "images/Staff400.webp",
+    "bio": "Cloud infrastructure specialist obsessed with CI/CD optimization and containerization. Powerlifter on weekends.",
+    "history": ["Systems Administrator at NetOps", "Cloud Support Engineer at AWS Solutions"]
+  },
+  {
+    "id": 112,
+    "name": "Charles Harrington",
+    "role": "Chief Executive Officer",
+    "salary": 240000,
+    "age": 47,
+    "gender": "Male",
+    "image": "images/Staff500.webp",
+    "bio": "Visionary executive driving corporate innovation and scaling market reach. Dedicated to sustainable tech and mentorship.",
+    "history": ["Chief Operations Officer at InnovateInc", "Managing Director at CapitalVenture"]
   }
 ]
