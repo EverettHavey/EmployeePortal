@@ -68,7 +68,7 @@
     </main>
 
     <script>
-        // 1. DEFAULT DATA: Hardcoded staff master list
+        // 1. DEFAULT DATA: Fixed paths relative to Employee/index.html using '../' and '.webp'
         const defaultStaff = [
             { "id": 101, "name": "Sarah Chen", "role": "Lead Software Architect", "salary": 115000, "age": 29, "gender": "Female", "image": "https://i.pravatar.cc/150?u=sarah", "bio": "Specializes in React and Node.js.", "history": ["Senior Dev at TechFlow"] },
             { "id": 102, "name": "Marcus Rodriguez", "role": "Senior UI/UX Designer", "salary": 78000, "age": 31, "gender": "Male", "image": "https://i.pravatar.cc/150?u=elena", "bio": "Focused on accessible design.", "history": ["Visual Designer at Studio Indigo"] },
@@ -77,33 +77,35 @@
             { "id": 105, "name": "Isaac Crawford", "role": "Senior Data Scientist", "salary": 108000, "age": 32, "gender": "Male", "image": "https://i.pravatar.cc/150?u=hannah", "bio": "Predictive modeling specialist.", "history": ["Data Analyst at QuantEdge"] },
             { "id": 106, "name": "Elena Rossi", "role": "Senior Product Owner", "salary": 110000, "age": 30, "gender": "Female", "image": "https://i.pravatar.cc/150?u=marcus", "bio": "Bridges the gap between users and tech.", "history": ["Product Manager at FinTech"] },
             { "id": 107, "name": "Hannah Vance", "role": "QA Automation Engineer", "salary": 75000, "age": 26, "gender": "Female", "image": "https://i.pravatar.cc/150?u=isaac", "bio": "Detail-oriented bug hunter.", "history": ["Junior QA at SoftTest"] },
-            { "id": 108, "name": "Ethan Caldwell", "role": "Junior Software Engineer", "salary": 68000, "age": 22, "gender": "Male", "image": "images/Staff100.webp", "bio": "Fresh graduate eager to optimize backend performance.", "history": ["Software Engineering Intern at TechCorp"] },
-            { "id": 109, "name": "Marcus Vance", "role": "UI/UX Designer", "salary": 85000, "age": 28, "gender": "Male", "image": "images/Staff200.webp", "bio": "Visual storyteller focusing on minimalist mobile interfaces.", "history": ["Graphic Designer at CreativeStudio"] },
-            { "id": 110, "name": "Julian Sterling", "role": "VP of Global Sales", "salary": 165000, "age": 44, "gender": "Male", "image": "images/Staff300.webp", "bio": "Strategic growth leader managing enterprise accounts.", "history": ["Director of Business Development at ScaleUp"] },
-            { "id": 111, "name": "Derek Reynolds", "role": "DevOps Engineer", "salary": 115000, "age": 31, "gender": "Male", "image": "images/Staff400.webp", "bio": "Cloud infrastructure specialist obsessed with CI/CD optimization.", "history": ["Systems Administrator at NetOps"] },
-            { "id": 112, "name": "Charles Harrington", "role": "Chief Executive Officer", "salary": 240000, "age": 47, "gender": "Male", "image": "images/Staff500.webp", "bio": "Visionary executive driving corporate innovation.", "history": ["Chief Operations Officer at InnovateInc"] }
+            { "id": 108, "name": "Ethan Caldwell", "role": "Junior Software Engineer", "salary": 68000, "age": 22, "gender": "Male", "image": "../images/Staff100.webp", "bio": "Fresh graduate eager to optimize backend performance.", "history": ["Software Engineering Intern at TechCorp"] },
+            { "id": 109, "name": "Marcus Vance", "role": "UI/UX Designer", "salary": 85000, "age": 28, "gender": "Male", "image": "../images/Staff200.webp", "bio": "Visual storyteller focusing on minimalist mobile interfaces.", "history": ["Graphic Designer at CreativeStudio"] },
+            { "id": 110, "name": "Julian Sterling", "role": "VP of Global Sales", "salary": 165000, "age": 44, "gender": "Male", "image": "../images/Staff300.webp", "bio": "Strategic growth leader managing enterprise accounts.", "history": ["Director of Business Development at ScaleUp"] },
+            { "id": 111, "name": "Derek Reynolds", "role": "DevOps Engineer", "salary": 115000, "age": 31, "gender": "Male", "image": "../images/Staff400.webp", "bio": "Cloud infrastructure specialist obsessed with CI/CD optimization.", "history": ["Systems Administrator at NetOps"] },
+            { "id": 112, "name": "Charles Harrington", "role": "Chief Executive Officer", "salary": 240000, "age": 47, "gender": "Male", "image": "../images/Staff500.webp", "bio": "Visionary executive driving corporate innovation.", "history": ["Chief Operations Officer at InnovateInc"] }
         ];
 
-        // 2. INITIALIZATION LOGIC: Smart merge to avoid overwriting or ignoring new records
+        // 2. INITIALIZATION LOGIC: Handles merging and updates seamlessly
         const existingData = localStorage.getItem('employeeData');
 
         if (!existingData) {
-            // First time loading the app: set everything
             localStorage.setItem('employeeData', JSON.stringify(defaultStaff));
         } else {
-            // App has run before: check for and append any newly added code records
             const currentList = JSON.parse(existingData);
-            const missingStaff = defaultStaff.filter(defEmp => 
-                !currentList.some(currEmp => currEmp.id === defEmp.id)
-            );
             
-            if (missingStaff.length > 0) {
-                const updatedList = [...currentList, ...missingStaff];
-                localStorage.setItem('employeeData', JSON.stringify(updatedList));
-            }
+            // Overwrite or update items to guarantee the path changes propagate
+            defaultStaff.forEach(defEmp => {
+                const existingIndex = currentList.findIndex(currEmp => currEmp.id === defEmp.id);
+                if (existingIndex > -1) {
+                    // Update image path and extension details for pre-existing setups
+                    currentList[existingIndex].image = defEmp.image;
+                } else {
+                    currentList.push(defEmp);
+                }
+            });
+            localStorage.setItem('employeeData', JSON.stringify(currentList));
         }
 
-        // 3. GET DATA: Pull the verified sync state from LocalStorage
+        // 3. GET DATA
         const data = JSON.parse(localStorage.getItem('employeeData'));
         const userIndex = localStorage.getItem('currentUserIndex');
 
