@@ -68,7 +68,7 @@
     </main>
 
     <script>
-        // 1. DEFAULT DATA: Only used if LocalStorage is empty
+        // 1. DEFAULT DATA: Hardcoded staff master list
         const defaultStaff = [
             { "id": 101, "name": "Sarah Chen", "role": "Lead Software Architect", "salary": 115000, "age": 29, "gender": "Female", "image": "https://i.pravatar.cc/150?u=sarah", "bio": "Specializes in React and Node.js.", "history": ["Senior Dev at TechFlow"] },
             { "id": 102, "name": "Marcus Rodriguez", "role": "Senior UI/UX Designer", "salary": 78000, "age": 31, "gender": "Male", "image": "https://i.pravatar.cc/150?u=elena", "bio": "Focused on accessible design.", "history": ["Visual Designer at Studio Indigo"] },
@@ -77,19 +77,33 @@
             { "id": 105, "name": "Isaac Crawford", "role": "Senior Data Scientist", "salary": 108000, "age": 32, "gender": "Male", "image": "https://i.pravatar.cc/150?u=hannah", "bio": "Predictive modeling specialist.", "history": ["Data Analyst at QuantEdge"] },
             { "id": 106, "name": "Elena Rossi", "role": "Senior Product Owner", "salary": 110000, "age": 30, "gender": "Female", "image": "https://i.pravatar.cc/150?u=marcus", "bio": "Bridges the gap between users and tech.", "history": ["Product Manager at FinTech"] },
             { "id": 107, "name": "Hannah Vance", "role": "QA Automation Engineer", "salary": 75000, "age": 26, "gender": "Female", "image": "https://i.pravatar.cc/150?u=isaac", "bio": "Detail-oriented bug hunter.", "history": ["Junior QA at SoftTest"] },
-            { "id": 108, "name": "Ethan Caldwell", "role": "Junior Software Engineer", "salary": 68000, "age": 22, "gender": "Male", "image": "images/Staff100.jpg", "bio": "Fresh graduate eager to optimize backend performance.", "history": ["Software Engineering Intern at TechCorp"] },
-            { "id": 109, "name": "Marcus Vance", "role": "UI/UX Designer", "salary": 85000, "age": 28, "gender": "Male", "image": "images/Staff200.jpg", "bio": "Visual storyteller focusing on minimalist mobile interfaces.", "history": ["Graphic Designer at CreativeStudio"] },
-            { "id": 110, "name": "Julian Sterling", "role": "VP of Global Sales", "salary": 165000, "age": 44, "gender": "Male", "image": "images/Staff300.jpg", "bio": "Strategic growth leader managing enterprise accounts.", "history": ["Director of Business Development at ScaleUp"] },
-            { "id": 111, "name": "Derek Reynolds", "role": "DevOps Engineer", "salary": 115000, "age": 31, "gender": "Male", "image": "images/Staff400.jpg", "bio": "Cloud infrastructure specialist obsessed with CI/CD optimization.", "history": ["Systems Administrator at NetOps"] },
-            { "id": 112, "name": "Charles Harrington", "role": "Chief Executive Officer", "salary": 240000, "age": 47, "gender": "Male", "image": "images/Staff500.jpg", "bio": "Visionary executive driving corporate innovation.", "history": ["Chief Operations Officer at InnovateInc"] }
-            ];
+            { "id": 108, "name": "Ethan Caldwell", "role": "Junior Software Engineer", "salary": 68000, "age": 22, "gender": "Male", "image": "images/Staff100.webp", "bio": "Fresh graduate eager to optimize backend performance.", "history": ["Software Engineering Intern at TechCorp"] },
+            { "id": 109, "name": "Marcus Vance", "role": "UI/UX Designer", "salary": 85000, "age": 28, "gender": "Male", "image": "images/Staff200.webp", "bio": "Visual storyteller focusing on minimalist mobile interfaces.", "history": ["Graphic Designer at CreativeStudio"] },
+            { "id": 110, "name": "Julian Sterling", "role": "VP of Global Sales", "salary": 165000, "age": 44, "gender": "Male", "image": "images/Staff300.webp", "bio": "Strategic growth leader managing enterprise accounts.", "history": ["Director of Business Development at ScaleUp"] },
+            { "id": 111, "name": "Derek Reynolds", "role": "DevOps Engineer", "salary": 115000, "age": 31, "gender": "Male", "image": "images/Staff400.webp", "bio": "Cloud infrastructure specialist obsessed with CI/CD optimization.", "history": ["Systems Administrator at NetOps"] },
+            { "id": 112, "name": "Charles Harrington", "role": "Chief Executive Officer", "salary": 240000, "age": 47, "gender": "Male", "image": "images/Staff500.webp", "bio": "Visionary executive driving corporate innovation.", "history": ["Chief Operations Officer at InnovateInc"] }
+        ];
 
-        // 2. INITIALIZATION LOGIC: Don't overwrite existing data!
-        if (!localStorage.getItem('employeeData')) {
+        // 2. INITIALIZATION LOGIC: Smart merge to avoid overwriting or ignoring new records
+        const existingData = localStorage.getItem('employeeData');
+
+        if (!existingData) {
+            // First time loading the app: set everything
             localStorage.setItem('employeeData', JSON.stringify(defaultStaff));
+        } else {
+            // App has run before: check for and append any newly added code records
+            const currentList = JSON.parse(existingData);
+            const missingStaff = defaultStaff.filter(defEmp => 
+                !currentList.some(currEmp => currEmp.id === defEmp.id)
+            );
+            
+            if (missingStaff.length > 0) {
+                const updatedList = [...currentList, ...missingStaff];
+                localStorage.setItem('employeeData', JSON.stringify(updatedList));
+            }
         }
 
-        // 3. GET DATA: Always pull the current state from the "Database"
+        // 3. GET DATA: Pull the verified sync state from LocalStorage
         const data = JSON.parse(localStorage.getItem('employeeData'));
         const userIndex = localStorage.getItem('currentUserIndex');
 
@@ -98,7 +112,6 @@
             if (userIndex === null) {
                 renderSelectionList(container);
             } else {
-                // Check if the user still exists (in case Admin deleted/fired them)
                 if (data[userIndex]) {
                     renderPrivateDashboard(container, data[userIndex]);
                 } else {
@@ -129,7 +142,7 @@
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
                         <div class="user-cell" style="display:flex; align-items:center; gap:15px;">
-                            <img src="${emp.image}" class="avatar" style="width: 50px; height: 50px; border-radius:50%;">
+                            <img src="${emp.image}" class="avatar" style="width: 50px; height: 50px; border-radius:50%; object-fit: cover;">
                             <h2 style="margin:0;">Welcome, ${emp.name}</h2>
                         </div>
                         <button onclick="logout()" class="btn-secondary">Logout</button>
